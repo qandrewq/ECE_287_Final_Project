@@ -1,0 +1,166 @@
+Multi-Sport Scoreboard
+
+ECE 287 Final Project
+Andrew Quintana & Dan Ocampo
+Dr. Peter Jamieson
+
+Description:
+
+Our goal for this project was to create a multiple sport scoreboard that could be manipulated depending on which sport was chosen. The 
+scoreboard was to be written in Verilog HDL, a hardware description language. The scoreboard was then programmed onto an FPGA on 
+Altera’s DE2-115 board. For our project we decided it would be best to output the scoreboard results as a VGA output onto a screen. This 
+VGA screen provided us with an optimal working area of 1280 by 1024 pixels that could be turned on or off depending on the design 
+desired to be outputted on the VGA. The visual part of the scoreboard was created by making boxes consisting of a minimum of 10 pixels 
+in the x and the y direction and adjust each one to become either a square or a rectangle and then arranging them on the screen in order 
+to make visual shapes. These visual boxes can be turned off and on by way of making them red or black in order to blend them into the 
+background. These boxes were arranged in such a way that they created a set of four individual 7-Segment displays to create a clock, and 
+two more sets of two individual 7-Segment displays to represent the score. To complement and control the scoreboard, a PS2 module was 
+borrowed and modified so that an input from a key could change the value of the score on the VGA display. These modifications allowed 
+for the 7- Segment clock to run up to a value of 45:00 which is the maximum amount of time needed for the sports we selected, in this 
+being soccer. The clock also has the function of being paused in order to accommodate for stoppage or injury time. Finally the clock can 
+also be made to countdown as required for sports like hockey, football, and basketball. 
+
+Project Objective
+
+Our initial objectives for our scoreboard design was to make it capable of handling 4 different sports that could be toggled and chosen
+through a keyboard input. From here a scoreboard design template would be displayed on the VGA. These templates were to include a
+functioning clock that had the ability to count up, count down, and be paused, a section of 5x7 dot matrix displays that could be used
+to output letters onto the screen, and finally two more sets of 7-Segment displays to display each team’s scores. A PS2 keyboard was to
+be plugged into the DE2 board and be used to input alphabetic characters into the 5x7 dot matrix displays on the VGA as well as be used
+to increase the cores of the teams and control the clock. The scoreboard was to be designed for multi-sport use meaning that we had to
+create multiple designs for each sport. These designs differed in the placement of the clock, names of the players, the score location,
+and finally some designs needed to have a greater amount of visual boxes created in order to output a different amount of information
+for different sports.
+
+Design Description
+
+Design
+
+The design of this scoreboard was to accept any and all occurrences that happened during sports games. Each sport has different
+scenarios that are taken into consideration when managing the scores and clock. The game time is able to be paused (even in soccer) to
+react to any sort of play. Each sport’s features will be described in more detail below.
+
+VGA
+
+The VGA module was borrowed from Parth Patel as a module with instructions for parameter changes. Here the module was full of comments
+explaining what each section of the module performed so it was not to difficult to pick up and understand. After doing some trial and
+error to understand the VGA box creation we decided to start designing the different scoreboards for our sports. In order to create any
+shapes inside of the VGA module, it was necessary to use basic drawing by making use of small boxes made up of pixels that were placed
+closed together to form a shape. To create a box inside of the VGA’s 1280 by 1020 display, we first had to specify a box size in width
+and length and then also specify its coordinate location in relation to the top left corner. The coordinate position was specified with
+the following basic reg line example:
+
+//"object 1"
+reg [31:0] object1X = 31'd366, object1Y = 31'd183;
+
+Here, each box to be drawn is labeled as “object1” where the “1” is a variable and changes depending on the box that you are drawing.
+The coordinate position is input into this line as “31'dXXX” where XXX is the pixel count from the top left corner. The size of the
+object itself was set by the local parameters created by Ben Shaffer in the form of the following code:
+
+//objectA_localParams
+localparam Object1_L = 31'd0;
+localparam Object1_R = Object1_L + 31'd549;
+localparam Object1_T = 31'd0;
+localparam Object1_B = Object1_T + 31'd110;
+assign Object1 =((X >= Object1_L + object1X)&&(X <= Object1_R + object1X)&&(Y >= Object1_T+ object1Y)&&(Y <= Object1_B+ object1Y));
+  
+Here the box size was specified to be 549 pixels wide by 110 pixels in height. The parameters labeled “L” and “T” were set to 0 as they
+would crash the VGA if they had a different numerical value and they also set the Left and Top locations of the box to be created. After
+the size was specified you had to move down to the “drawing shapes” section of the VGA code, here the always block was used to specify
+which box would be on and which would be off. 
+
+  if(Object1) begin
+		box1 = 1'b1; box2 = 1'b0;
+		end
+	else if(Object2) begin
+		box1 = 1'b0; box2 = 1'b1;
+		end
+	else begin
+		box1 = 1'b0; box2 = 1'b0;
+		end
+
+This block was used to specify an order of layer importance and allowed for the boxes to be prioritized for each other in the display.
+In the first If statement labeled “Object1”, this can be seen as box1 would be on while box2 would be set to off with 1’s and 0’s. This
+forces the only Object1's box1 to be on while also layering it as the most important box to be displayed on the VGA. Finally the last
+parameter that needed to be modified for each box was the color module. This module uses an RGB value in order to output a color for
+each box.
+
+  if(box1) begin
+		red = 8'd255;
+		blue = 8'd000;
+		green = 8'd000;
+		End
+  else begin
+		red = 8'd0;
+		blue = 8'd0;
+		green = 8'd0;
+		end
+
+An example of this can be seen above as box1 is set to display the RGB code of (255,0,0) which displays the color red or else if the box
+is turned off by it would display the RGB code of (0,0,0) which displays the color black. This is what determines to be the box on or
+off as the box that is turned black would blend into the background and thus be “off”. 
+
+The differences in each scoreboard can be seen below where the pictures provided show the different designs for each sport. Since we did
+not create or borrow any text rendering modules we tried to create alphabetical characters out of two different methods. At first we
+wanted to create an array of 5x7 dot matrix displays set next to each other. Each 5x7 would be tasked with outputting an alphabetical
+character whenever the corresponding key was pressed on the PS2 keyboard. To create this 5x7 display we had to create sets of 35
+separate boxes and align them in 5 columns and 7 rows. Each “box” was to represent an led on a typical LED 5x7 dot matrix display
+available commercially. This method proved to be successful with only minor bugs on the output of each letter where an extra box would
+appear for certain letters or there would be a box or 2 missing from a character. The second method was more simple but required a lot
+of more work as each letter was to be made individually as a combination of a set of boxes. This resulted in the creation of more boxes
+than we were comfortable making so we settled for making only the characters required to spell out  “HOME” and “AWAY” for each
+corresponding team.
+
+One of the problems we ran into very quickly during our design of the scoreboard was the limitation of a successful VGA display of more
+than 63 individual boxes. This created a huge problem for us since the clock that was made out of 7-segment displays required 30 boxes
+and each 5x7 dot matrix required 35 boxes for each matrix. This meant that even for our simplest design we had a requirement of about
+350 boxes to create. This was a huge problem and resulted in us having to downsize all of our designs by huge portions. A new scoreboard
+out of 62 boxes was created that was similar to the provided copy of the “Soccer/Basketball/Hockey” scoreboard but without the Home or
+Away identifiers as those created the need for more boxes than we had available allowance for. This could be in part because of the
+amount of boxes we were trying to store. All of our problems that were occurring seemed to be because of the clock synchronization. This
+could be because the clock on the FPGA that we were using was working at 50MHz, while the clock on the VGA was sped up with the code we
+received to 108MHz. Finally the last and most worrying of our problems came when we were trying to account for the box allowance and we
+found that shapes that were placed too far to the left or right would glitch and blend into a solid bar that went across the entire
+length of the screen. This meant that one of our 7-Segment displays could not be moved farther left than the farthest most part of the
+clock or x direction 484 pixels.
+
+Soccer, Basketball, and Hockey Scoreboard design for the VGA
+
+http://imgur.com/tmQ5N04 
+
+For this scoreboard design we decided to make a simple design that would be capable of outputting correct results in the correct format 
+for all three sports of Soccer, Basketball, and Hockey. The Home and Away characters demanded a need for 33 boxes on top of the 30 boxes 
+for the clock, 28 boxes for all four 7-segment displays for each team’s double digit score, and finally 4 boxes for the period, quarter, 
+and half designation squares. This meant that a requirement of 95 individual boxes to be created was needed.
+
+Football
+	
+http://imgur.com/tmQ5N04 
+
+The football scoreboard was one of our more involved scoreboards as it required the creation of  492 individual boxes to create all of 
+the characters. This included the use of 12 5x7 dot matrixes and ten 7-Segment displays. 
+
+Dot Matrix Display
+
+The dot matrix display for our scoreboard was created in the form shown here to create alphabetical outputs. An array of 35 individual boxes arranged in 5 columns of 7 boxes was created and to output a letter some of the boxes would be turned to the color black and only those boxes that were necessary to output the letter would be colored red. This can be easily represented by the following diagram:
+
+http://imgur.com/hx2Yxm6
+
+This picture perfectly illustrates how each letter is created in the 5x7 display by choosing which box would need to be lit in a color 
+other than the background. For example, since our project used all red lettering every box that is colored black in the graphic above, 
+would be located and colored red and every box that is colored in white would be colored white so that it would blend in with the VGA 
+background and thus be turned “off”.
+
+PS2 Keyboard
+
+Our Keyboard code module is a modified version of Isaac Steigers’ code that he had modified after finding a barebones version on the
+Altera Forums. The code we received from Isaac was very simple and only a handful of lines in total which made it easy to understand
+after reading the module line by line. 
+Once we figured out how the code worked, we were able to interpret it and pair it with the VGA code and our 5x7 code in order to use it
+to start, stop, and reverse the clock. For the 5x7 dot matrix each alphabetical key was paired with a 5x7 design in order to output the
+correct alphabetical letter. Each time a key is pressed, three signals are sent. There is a one-bit datafetched signal and 8-bit rxdata
+signals sent. The datafetched signal is sent every time data is received from the keyboard. When the key is pressed, a hexadecimal
+signal corresponding to the key is sent to the FPGA as rxdata and once the key is released the hexadecimal signal F0 is sent, followed
+by the same signal corresponding to the key. The way we read this information was to use a register which kept track of the rxdata
+signals. When a datafetched signal is sent, each rxdata signal is stored until the F0 signal is received by the FPGA. At this time the
+following signal 
