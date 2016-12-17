@@ -100,17 +100,6 @@ An example of this can be seen above as box1 is set to display the RGB code of (
 is turned off by it would display the RGB code of (0,0,0) which displays the color black. This is what determines to be the box on or
 off as the box that is turned black would blend into the background and thus be “off”. 
 
-The differences in each scoreboard can be seen below where the pictures provided show the different designs for each sport. Since we did
-not create or borrow any text rendering modules we tried to create alphabetical characters out of two different methods. At first we
-wanted to create an array of 5x7 dot matrix displays set next to each other. Each 5x7 would be tasked with outputting an alphabetical
-character whenever the corresponding key was pressed on the PS2 keyboard. To create this 5x7 display we had to create sets of 35
-separate boxes and align them in 5 columns and 7 rows. Each “box” was to represent an led on a typical LED 5x7 dot matrix display
-available commercially. This method proved to be successful with only minor bugs on the output of each letter where an extra box would
-appear for certain letters or there would be a box or 2 missing from a character. The second method was more simple but required a lot
-of more work as each letter was to be made individually as a combination of a set of boxes. This resulted in the creation of more boxes
-than we were comfortable making so we settled for making only the characters required to spell out  “HOME” and “AWAY” for each
-corresponding team.
-
 One of the problems we ran into very quickly during our design of the scoreboard was the limitation of a successful VGA display of more
 than 63 individual boxes. This created a huge problem for us since the clock that was made out of 7-segment displays required 30 boxes
 and each 5x7 dot matrix required 35 boxes for each matrix. This meant that even for our simplest design we had a requirement of about
