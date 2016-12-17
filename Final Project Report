@@ -124,7 +124,7 @@ found that shapes that were placed too far to the left or right would glitch and
 length of the screen. This meant that one of our 7-Segment displays could not be moved farther left than the farthest most part of the
 clock or x direction 484 pixels.
 
-Soccer, Basketball, and Hockey Scoreboard design for the VGA
+Soccer, Basketball, Football, and Hockey Scoreboard design for the VGA
 
 http://imgur.com/tmQ5N04 
 
@@ -133,29 +133,29 @@ for all three sports of Soccer, Basketball, and Hockey. The Home and Away charac
 for the clock, 28 boxes for all four 7-segment displays for each team’s double digit score, and finally 4 boxes for the period, quarter, 
 and half designation squares. This meant that a requirement of 95 individual boxes to be created was needed.
 
-Football
-	
-http://imgur.com/tmQ5N04 
-
-The football scoreboard was one of our more involved scoreboards as it required the creation of  492 individual boxes to create all of 
-the characters. This included the use of 12 5x7 dot matrixes and ten 7-Segment displays. 
-
 Dot Matrix Display
 
-The dot matrix display for our scoreboard was created in the form shown here to create alphabetical outputs. An array of 35 individual boxes arranged in 5 columns of 7 boxes was created and to output a letter some of the boxes would be turned to the color black and only those boxes that were necessary to output the letter would be colored red. This can be easily represented by the following diagram:
+The dot matrix display for our scoreboard was created in the form shown here to create alphabetical outputs. An array of 35 individual
+boxes arranged in 5 columns of 7 boxes was created and to output a letter some of the boxes would be turned to the color black and only
+those boxes that were necessary to output the letter would be colored red. This can be easily represented by the following diagram:
 
 http://imgur.com/hx2Yxm6
 
 This picture perfectly illustrates how each letter is created in the 5x7 display by choosing which box would need to be lit in a color 
 other than the background. For example, since our project used all red lettering every box that is colored black in the graphic above, 
 would be located and colored red and every box that is colored in white would be colored white so that it would blend in with the VGA 
-background and thus be turned “off”.
+background and thus be turned “off”. The dot matrix was faulty, however, with boxes 5, 8, and 9 consistenly giving us problems. In some
+cases they were on while they should have been off and vice versa. We tried to fix this error by switching the value that would turn the
+box black. This had no effect on the output, which showed there was a deeper bug in the system.
+
+These
 
 PS2 Keyboard
 
 Our Keyboard code module is a modified version of Isaac Steigers’ code that he had modified after finding a barebones version on the
 Altera Forums. The code we received from Isaac was very simple and only a handful of lines in total which made it easy to understand
 after reading the module line by line. 
+
 Once we figured out how the code worked, we were able to interpret it and pair it with the VGA code and our 5x7 code in order to use it
 to start, stop, and reverse the clock. For the 5x7 dot matrix each alphabetical key was paired with a 5x7 design in order to output the
 correct alphabetical letter. Each time a key is pressed, three signals are sent. There is a one-bit datafetched signal and 8-bit rxdata
@@ -163,4 +163,38 @@ signals sent. The datafetched signal is sent every time data is received from th
 signal corresponding to the key is sent to the FPGA as rxdata and once the key is released the hexadecimal signal F0 is sent, followed
 by the same signal corresponding to the key. The way we read this information was to use a register which kept track of the rxdata
 signals. When a datafetched signal is sent, each rxdata signal is stored until the F0 signal is received by the FPGA. At this time the
-following signal 
+following signal will be the key that was released. This data was saved as the keycode in a register then the correct action was taken
+depending on the key pressed.
+
+Clock Display
+
+We made a working clock looking like this WX:YZ. The Z-values represented hundredths of seconds, the Y-values represented the tenths of
+seconds, the X-values represented the seconds, and the W-values represented the tens of seconds. These were set to this time by dividing
+the clock speed of 50MHz by 100. This gave us 50*104, which was used in our time counter. There were a few different counters going at
+the same time with different purposes. A couple of these include the counter that would output a pulse every hundredth of a second. This
+pulse then incremented other pulses, which would be used in the clock. Of those incremented included the upward counter and the downward
+counter. End values and start values were set depending on the sport. Every 50 of these pulses set a time pulse to 1, which controlled 
+the colon in between the “minutes” and the “seconds.” This was set up this way in order to for it to turn on every second interval.
+
+Results
+
+In the end we had trouble with combining the keyboard inputs/outputs and the VGA inputs. This was most likely because the clocks were not coordinated properly. A greater, higher functioning scoreboard was developed, however, a couple of hours before the demo the file stopped sending the outputs to the FPGA. Even after using the VGA for hours on end this problem could not be fixed. We then decided to backtrack to different elements that were tested before they were assembled as a whole.
+Of the parts we demonstrated were the working timer, which would count up or down depending on the sport selected. The current time in the game was displayed on the VGA. This timer could be paused at any point in time and would stop at the correct time. The other part of the project that we demonstrated was the score counter. This score counter was modified after the demonstration to be shown on the 7 segment displays. Keys on the keyboard could be used to increment the score, depending on the number value that was pressed. Number keys along the top of the qwerty keyboard would increase the score of team A, while the F1-F9 keys could be used to increase the score for team B. When the Ctrl button was clicked, the score could be subtracted from, allowing easy changes in the score.
+	
+Citations
+
+VGA
+This module was provided to us in a modified form by Parth Patel. Most of all the code here is modified to basic VGA Displaying
+capabilities, VGA MODULE adopted from BEN SHAFFER…Utilized Ben's VGA module that he borrowed from OAKLEY KATTERHEINRICH. Parameters for
+were set by Ben. 
+
+PS2 
+Keyboard Module was borrowed from borrowed it from Isaac Steiger. Isaac modified the code after he found a basic version that he found
+on the altera forums. http://www.alteraforum.com/forum/showthread.php?t=46549
+
+Videos
+
+https://youtu.be/gmoUk2bMIWE (Timer Demonstration)
+https://youtu.be/_jQvM4UMCYY (Score Counter Demonstration)
+https://youtu.be/Dq7q4kVYlNs (Failed 5x7 VGA-Keyboard Demonstration)
+https://youtu.be/JHJRCqL6YhM (Errors in all 5x7 Letters)
