@@ -178,8 +178,17 @@ the colon in between the “minutes” and the “seconds.” This was set up th
 
 Results
 
-In the end we had trouble with combining the keyboard inputs/outputs and the VGA inputs. This was most likely because the clocks were not coordinated properly. A greater, higher functioning scoreboard was developed, however, a couple of hours before the demo the file stopped sending the outputs to the FPGA. Even after using the VGA for hours on end this problem could not be fixed. We then decided to backtrack to different elements that were tested before they were assembled as a whole.
-Of the parts we demonstrated were the working timer, which would count up or down depending on the sport selected. The current time in the game was displayed on the VGA. This timer could be paused at any point in time and would stop at the correct time. The other part of the project that we demonstrated was the score counter. This score counter was modified after the demonstration to be shown on the 7 segment displays. Keys on the keyboard could be used to increment the score, depending on the number value that was pressed. Number keys along the top of the qwerty keyboard would increase the score of team A, while the F1-F9 keys could be used to increase the score for team B. When the Ctrl button was clicked, the score could be subtracted from, allowing easy changes in the score.
+In the end we had trouble with combining the keyboard inputs/outputs and the VGA inputs. This was most likely because the clocks were not
+coordinated properly. A greater, higher functioning scoreboard was developed, however, a couple of hours before the demo the file stopped
+sending the outputs to the FPGA. Even after using the VGA for hours on end this problem could not be fixed. We then decided to backtrack
+to different elements that were tested before they were assembled as a whole.
+
+Of the parts we demonstrated were the working timer, which would count up or down depending on the sport selected. The current time in the
+game was displayed on the VGA. This timer could be paused at any point in time and would stop at the correct time. The other part of the
+project that we demonstrated was the score counter. This score counter was modified after the demonstration to be shown on the 7 segment 
+displays. Keys on the keyboard could be used to increment the score, depending on the number value that was pressed. Number keys along
+the top of the qwerty keyboard would increase the score of team A, while the F1-F9 keys could be used to increase the score for team B.
+When the Ctrl button was clicked, the score could be subtracted from, allowing easy changes in the score.
 	
 Citations
 
